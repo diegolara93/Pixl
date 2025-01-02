@@ -24,6 +24,9 @@
 .DS_Store
 *.pem
 
+# temporarily opt out of json files since firebase info is in one
+*.json
+
 # debug
 npm-debug.log*
 yarn-debug.log*
