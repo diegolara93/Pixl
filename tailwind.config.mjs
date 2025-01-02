@@ -5,6 +5,32 @@ export default {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  daisyui: {
+    themes: [
+      {
+        catppuccinmocha: {
+          
+"primary": "#f2cdcd",
+          
+"secondary": "#f5e0dc",
+          
+"accent": "#f5c2e7",
+          
+"neutral": "#74c7ec",
+          
+"base-100": "#11111b",
+          
+"info": "#f9e2af",
+          
+"success": "#a6e3a1",
+          
+"warning": "#fab387",
+          
+"error": "#f38ba8",
+          },
+        },
+      ],
+    },
   theme: {
     extend: {
       colors: {
@@ -13,5 +39,7 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('daisyui')
+  ],
 };
