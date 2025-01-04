@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import { initEditor } from "./edit";
 import NavBar from "../components/navbar";
 
-
 const colorPalette = [
   "#000000", "#FFFFFF", "#FF0000", "#00FF00",
   "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF",
@@ -12,29 +11,28 @@ const colorPalette = [
 ];
 
 export default function CanvasPage() {
-    const canvasRef = useRef(null);
-    const clearButtonRef = useRef(null);
-    const saveButtonRef = useRef(null);
-    const downloadButtonRef = useRef(null);
-    
+  const canvasRef = useRef(null);
+  const clearButtonRef = useRef(null);
+  const saveButtonRef = useRef(null);
+  const downloadButtonRef = useRef(null);
+  
+  const [drawColor, setDrawColor] = useState("#000000");
+  const drawColorRef = useRef(drawColor);
 
-    const [drawColor, setDrawColor] = useState("#000000"); 
-    
-    const drawColorRef = useRef(drawColor);
-  
-    useEffect(() => {
-      drawColorRef.current = drawColor;
-    }, [drawColor]);
-  
-    useEffect(() => {
-      if (!canvasRef.current || !clearButtonRef.current) return;
-      const cleanup = initEditor(canvasRef.current, clearButtonRef.current, drawColorRef);
-      return cleanup;
-    }, []);
+  useEffect(() => {
+    drawColorRef.current = drawColor;
+  }, [drawColor]);
+
+  useEffect(() => {
+    if (!canvasRef.current || !clearButtonRef.current) return;
+    const cleanup = initEditor(canvasRef.current, clearButtonRef.current, drawColorRef);
+    return cleanup;
+  }, []);
+
   return (
-    <div className="bg-base-100 justify-content-center"><NavBar></NavBar>
-    <div className="bg-base-100 p-4">
+    <div className="bg-base-100 min-h-screen p-4">
       <div className="flex flex-col md:flex-row items-center justify-center mt-10">
+        {/* Canvas Section */}
         <div className="flex flex-col items-center">
           <canvas
             ref={canvasRef}
@@ -55,8 +53,10 @@ export default function CanvasPage() {
             </button>
           </div>
         </div>
-  
+
+        {/* Color Selection Section */}
         <div className="mt-10 md:mt-0 md:ml-10 w-full max-w-xs">
+          {/* Color Palette */}
           <div className="mb-6">
             <h2 className="text-lg font-semibold mb-2">Color Palette</h2>
             <div className="grid grid-cols-4 gap-2">
@@ -71,7 +71,8 @@ export default function CanvasPage() {
               ))}
             </div>
           </div>
-  
+
+          {/* Color Picker */}
           <div>
             <h2 className="text-lg font-semibold mb-2">Color Picker</h2>
             <input
@@ -84,7 +85,6 @@ export default function CanvasPage() {
           </div>
         </div>
       </div>
-    </div>
     </div>
   );
 }

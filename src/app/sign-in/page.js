@@ -36,8 +36,7 @@ export default function SignIn() {
     }
     return (
         <div className="bg-base-100">
-          <NavBar />
-          <div className="mt-[8rem] justify-items-center">
+          <div className="pt-[5rem] justify-items-center">
             <Card
               email={email}
               setEmail={setEmail}

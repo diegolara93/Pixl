@@ -81,8 +81,7 @@ export default function SignUp() {
 
     return (
         <div className="bg-base-100">
-            <NavBar />
-            <div className="mt-[8rem] flex justify-center">
+            <div className="pt-[5rem] flex justify-center">
                 <Card
                     email={email}
                     setEmail={setEmail}

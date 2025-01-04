@@ -5,7 +5,6 @@ import Hero from "./components/hero";
 export default function Home() {
   return (
     <div className="bg-base-100">
-      <NavBar></NavBar>
       <Hero></Hero>
     </div>
   );

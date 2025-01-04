@@ -40,7 +40,7 @@ func main() {
 	}))
 
 	// Initialize Firebase Admin SDK
-	filePath := filepath.Join("..", "..", "..", "..", "firebase", "pixl-3d6ba-firebase-adminsdk-8yol2-d5b1022141.json")
+	filePath := filepath.Join("..", "..", "firebase", "pixl-3d6ba-firebase-adminsdk-8yol2-b6b2984610.json")
 	ctx := context.Background()
 	opt := option.WithCredentialsFile(filePath)
 	app, err := firebase.NewApp(ctx, nil, opt)
