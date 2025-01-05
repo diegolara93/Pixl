@@ -1,7 +1,10 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { initEditor } from "./edit";
-import NavBar from "../components/navbar";
+
+// ADDED: import your Firebase auth
+import { auth } from "../lib/firebase"; 
+import { onAuthStateChanged } from "firebase/auth"; 
 
 const colorPalette = [
   "#000000", "#FFFFFF", "#FF0000", "#00FF00",
@@ -15,9 +18,20 @@ export default function CanvasPage() {
   const clearButtonRef = useRef(null);
   const saveButtonRef = useRef(null);
   const downloadButtonRef = useRef(null);
-  
+
   const [drawColor, setDrawColor] = useState("#000000");
   const drawColorRef = useRef(drawColor);
+
+  // ADDED: track the logged-in Firebase user in state
+  const [user, setUser] = useState(null);
+
+  // Listen for changes in the auth state (so we know who is logged in)
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     drawColorRef.current = drawColor;
@@ -28,6 +42,66 @@ export default function CanvasPage() {
     const cleanup = initEditor(canvasRef.current, clearButtonRef.current, drawColorRef);
     return cleanup;
   }, []);
+
+  const handleSave = async () => {
+    // 1. Check we have a valid canvas ref
+    if (!canvasRef.current) return;
+
+    // 2. Check if user is logged in
+    if (!user) {
+      alert("Please log in before saving a drawing!");
+      return;
+    }
+
+    // 3. Generate pixel data
+    const ctx = canvasRef.current.getContext("2d");
+    const resolution = 16;
+    const pixelSize = canvasRef.current.width / resolution;
+    const drawing = [];
+
+    for (let y = 0; y < resolution; y++) {
+      const row = [];
+      for (let x = 0; x < resolution; x++) {
+        const imageData = ctx.getImageData(x * pixelSize, y * pixelSize, 1, 1).data;
+        const hexColor = rgbToHex(imageData[0], imageData[1], imageData[2]);
+        row.push(hexColor);
+      }
+      drawing.push(row);
+    }
+
+    try {
+      // 4. Get the ID token from Firebase
+      const idToken = await user.getIdToken();
+
+      // 5. Send the drawing data + token
+      const response = await fetch("http://localhost:8080/api/save-drawing", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // ADDED: pass the token in the Authorization header
+          "Authorization": `Bearer ${idToken}`
+        },
+        body: JSON.stringify({ drawing })
+      });
+
+      if (response.ok) {
+        alert("Drawing saved successfully!");
+      } else {
+        alert("Failed to save drawing.");
+      }
+    } catch (error) {
+      console.error("Error saving drawing:", error);
+      alert("An error occurred while saving the drawing.");
+    }
+  };
+
+  // Convert (r,g,b) to HEX
+  const rgbToHex = (r, g, b) => {
+    return "#" + [r, g, b].map((x) => {
+      const hex = x.toString(16);
+      return hex.length === 1 ? "0" + hex : hex;
+    }).join("");
+  };
 
   return (
     <div className="bg-base-100 min-h-screen p-4">
@@ -42,7 +116,7 @@ export default function CanvasPage() {
             height="500"
           ></canvas>
           <div className="mt-4 flex space-x-2">
-            <button ref={saveButtonRef} id="save" className="btn btn-primary">
+            <button onClick={handleSave} ref={saveButtonRef} id="save" className="btn btn-primary">
               Save
             </button>
             <button ref={downloadButtonRef} id="download" className="btn btn-secondary">
@@ -56,7 +130,6 @@ export default function CanvasPage() {
 
         {/* Color Selection Section */}
         <div className="mt-10 md:mt-0 md:ml-10 w-full max-w-xs">
-          {/* Color Palette */}
           <div className="mb-6">
             <h2 className="text-lg font-semibold mb-2">Color Palette</h2>
             <div className="grid grid-cols-4 gap-2">
@@ -72,7 +145,6 @@ export default function CanvasPage() {
             </div>
           </div>
 
-          {/* Color Picker */}
           <div>
             <h2 className="text-lg font-semibold mb-2">Color Picker</h2>
             <input
