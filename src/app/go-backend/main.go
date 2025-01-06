@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/base64"
 	"log"
 	"net/http"
 	"os"
@@ -59,9 +58,7 @@ func main() {
 
 	dsn := "host=" + dbHost + " user=" + dbUser + " password=" + dbPass + " dbname=" + dbName + " port=" + dbPort + " sslmode=disable"
 
-	credsB64 := os.Getenv("FIREBASE_CREDENTIALS")
-	credsJSON, _ := base64.StdEncoding.DecodeString(credsB64)
-
+	opt := option.WithCredentialsFile("firebase.json")
 	e := echo.New()
 
 	// Middleware
@@ -78,7 +75,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to decode FIREBASE_CREDENTIALS: %v", err)
 	}
-	opt := option.WithCredentialsJSON(credsJSON)
+
 	app, err := firebase.NewApp(ctx, nil, opt)
 	if err != nil {
 		log.Fatalf("error initializing Firebase app: %v", err)
