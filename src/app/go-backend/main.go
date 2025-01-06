@@ -65,7 +65,7 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:  []string{"https://pixl-three.vercel.app/"},
+		AllowOrigins:  []string{"http://localhost:3000", "https://pixl-three.vercel.app", "https://pixl-git-main-diegos-projects-c68a74fc.vercel.app", "https://pixl-k7zvm7f0l-diegos-projects-c68a74fc.vercel.app/"},
 		AllowMethods:  []string{echo.GET, echo.POST, echo.PUT, echo.DELETE, echo.OPTIONS},
 		AllowHeaders:  []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
 		ExposeHeaders: []string{echo.HeaderContentType, echo.HeaderAuthorization},
