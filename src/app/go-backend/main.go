@@ -72,9 +72,6 @@ func main() {
 	}))
 
 	ctx := context.Background()
-	if err != nil {
-		log.Fatalf("Failed to decode FIREBASE_CREDENTIALS: %v", err)
-	}
 
 	app, err := firebase.NewApp(ctx, nil, opt)
 	if err != nil {
