@@ -8,6 +8,8 @@ import { onAuthStateChanged } from "firebase/auth";
 export default function MyArt() {
   const [user, setUser] = useState(null);
   const [drawings, setDrawings] = useState([]);
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -16,21 +18,21 @@ export default function MyArt() {
         try {
           const token = await firebaseUser.getIdToken();
 
-          const response = await fetch("http://localhost:8080/api/me", {
+          const response = await fetch(`${apiBaseUrl}/api/me`, {
             headers: {
               Authorization: `Bearer ${token}`
             }
           });
           if (response.ok) {
             const userData = await response.json();
-            // Use the capitalized keys from the server
+ 
             setDrawings(userData.Drawings ?? []);
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
         }
       } else {
-        // user logged out
+
         setUser(null);
         setDrawings([]);
       }
@@ -60,12 +62,11 @@ export default function MyArt() {
 function ArtPreview({ drawing }) {
   // 'drawing' should be a 2D array of hex strings (16×16)
   if (!drawing) {
-    // If for some reason it's undefined, handle gracefully
     return <div>No drawing data</div>;
   }
 
   const resolution = 16;
-  const tileSize = 10; // each "pixel" is 10px
+  const tileSize = 10; 
 
   return (
     <div
@@ -80,7 +81,7 @@ function ArtPreview({ drawing }) {
       {drawing.map((row, rowIndex) =>
         row.map((color, colIndex) => (
           <div
-            key={`${rowIndex}-${colIndex}`} // unique for each cell
+            key={`${rowIndex}-${colIndex}`}
             style={{
               width: tileSize,
               height: tileSize,
