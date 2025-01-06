@@ -1,8 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { initEditor } from "./edit";
-
-// ADDED: import your Firebase auth
 import { auth } from "../lib/firebase"; 
 import { onAuthStateChanged } from "firebase/auth"; 
 
@@ -14,6 +12,7 @@ const colorPalette = [
 ];
 
 export default function CanvasPage() {
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
   const canvasRef = useRef(null);
   const clearButtonRef = useRef(null);
   const saveButtonRef = useRef(null);
@@ -22,10 +21,8 @@ export default function CanvasPage() {
   const [drawColor, setDrawColor] = useState("#000000");
   const drawColorRef = useRef(drawColor);
 
-  // ADDED: track the logged-in Firebase user in state
   const [user, setUser] = useState(null);
 
-  // Listen for changes in the auth state (so we know who is logged in)
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
@@ -44,16 +41,13 @@ export default function CanvasPage() {
   }, []);
 
   const handleSave = async () => {
-    // 1. Check we have a valid canvas ref
     if (!canvasRef.current) return;
 
-    // 2. Check if user is logged in
     if (!user) {
       alert("Please log in before saving a drawing!");
       return;
     }
 
-    // 3. Generate pixel data
     const ctx = canvasRef.current.getContext("2d");
     const resolution = 16;
     const pixelSize = canvasRef.current.width / resolution;
@@ -70,15 +64,11 @@ export default function CanvasPage() {
     }
 
     try {
-      // 4. Get the ID token from Firebase
       const idToken = await user.getIdToken();
-
-      // 5. Send the drawing data + token
-      const response = await fetch("http://localhost:8080/api/save-drawing", {
+      const response = await fetch(`${apiBaseUrl}/api/save-drawing`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // ADDED: pass the token in the Authorization header
           "Authorization": `Bearer ${idToken}`
         },
         body: JSON.stringify({ drawing })
@@ -95,7 +85,7 @@ export default function CanvasPage() {
     }
   };
 
-  // Convert (r,g,b) to HEX
+  // Convert (r,g,b) to hex since thats how it's stored in the db
   const rgbToHex = (r, g, b) => {
     return "#" + [r, g, b].map((x) => {
       const hex = x.toString(16);
@@ -106,7 +96,6 @@ export default function CanvasPage() {
   return (
     <div className="bg-base-100 min-h-screen p-4">
       <div className="flex flex-col md:flex-row items-center justify-center mt-10">
-        {/* Canvas Section */}
         <div className="flex flex-col items-center">
           <canvas
             ref={canvasRef}
@@ -128,7 +117,6 @@ export default function CanvasPage() {
           </div>
         </div>
 
-        {/* Color Selection Section */}
         <div className="mt-10 md:mt-0 md:ml-10 w-full max-w-xs">
           <div className="mb-6">
             <h2 className="text-lg font-semibold mb-2">Color Palette</h2>

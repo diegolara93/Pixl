@@ -40,14 +40,13 @@ export default function MyArt() {
 
   return (
     <div className="bg-base-100 justify-items-center">
-      <h1 className="text-4xl font-bold">Your Art</h1>
+      <h1 className="text-4xl font-bold mb-5">Your Art</h1>
       
       {!user && <p>Please log in to see your art.</p>}
       {user && drawings.length === 0 && <p>You have no drawings yet!</p>}
 
-      <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+      <div className="mr-14 ml-16" style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
         {drawings.map((drawingObj) => (
-          // Provide a unique key, e.g. the drawing ID from the server
           <ArtPreview
             key={drawingObj.ID} 
             drawing={drawingObj.Drawing}

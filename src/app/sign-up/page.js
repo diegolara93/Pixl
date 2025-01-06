@@ -10,7 +10,7 @@ export default function SignUp() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const router = useRouter();
-
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
 
     const handleSignUp = async (e) => {
         e.preventDefault();
@@ -20,7 +20,7 @@ export default function SignUp() {
             console.log("Signed up:", firebaseUser.email);
 
             // Send UID and other info to Go backend
-            const response = await fetch('http://localhost:8080/api/signup', { 
+            const response = await fetch(`${apiBaseUrl}/api/signup`, { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ export default function SignUp() {
             const firebaseUser = result.user;
             console.log("Google Sign-Up:", firebaseUser.email);
 
-            const response = await fetch('http://localhost:8080/api/signup', { 
+            const response = await fetch(`${apiBaseUrl}/api/signup`, { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -1,6 +1,5 @@
 "use client";
 import Card from "../components/card";
-import NavBar  from "../components/navbar";
 import React, { useState } from 'react';
 import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { auth } from '../lib/firebase';

@@ -38,7 +38,7 @@ export default function Hero() {
     <div className="max-w-md">
       <h1 className="rainbow-text text-7xl font-bold">Pixl.io</h1>
       <p className="rainbow-text py-6">
-        A free, online, pixel art editor built with Next.Js and Go
+        A free, online pixel art editor built with Next.Js and Go
       </p>
       {signInOrOut}
     </div>
